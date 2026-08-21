@@ -55,9 +55,8 @@
 
 ## 🎯 Próximos Passos (Próxima Sessão / Próxima Lição)
 
-1. **`DataFrameTest.java`** (próximo passo imediato): cobrir `shape()` vazio, `addColumn` caminho feliz, exceção de nome duplicado, exceção de linhas incompatíveis, `getColumn` com nome inexistente.
-2. **Exibição formatada no terminal** (`toString()` ou `show()`): atenção — a chave do `LinkedHashMap` é a fonte de verdade do nome da coluna, não necessariamente `column.getName()` (relevante se o tratamento de nome duplicado evoluir pra auto-rename no futuro).
-3. **Leitor de CSV (`CsvReader` / `DataFrameReader`)**:
+1. **Testes para `toString()`/`show()`/`show(int)`** (próximo passo imediato — ver checklist na nota de sessão de 2026-08-20 abaixo).
+2. **Leitor de CSV (`CsvReader` / `DataFrameReader`)**:
    - Leitura de arquivos `.csv` e instanciação automática do `DataFrame`.
 
 ---
@@ -99,3 +98,16 @@
 - Linha em branco dupla entre imports e a declaração da classe apareceu em duas rodadas seguidas e depois sumiu sozinha (possivelmente resolvida ao reorganizar imports no IntelliJ) — sem necessidade de investigar mais.
 - Estado final: suite completa rodando `mvn test` = **31/31 testes passando** (`BUILD SUCCESS`), cobrindo os 6 tipos de coluna + `DataFrame`.
 - Próxima sessão: exibição formatada em terminal para `DataFrame` (`toString()` ou `show()`) — lembrar que a chave do `LinkedHashMap` é a fonte de verdade do nome da coluna, não necessariamente `column.getName()` (relevante caso o auto-rename de nomes duplicados seja revisitado).
+
+## 📝 Notas da Sessão de 2026-08-19/2026-08-20
+
+- `README.md` atualizado pra refletir o estado atual (Módulos 1–3 concluídos, Módulo 4 "exibição formatada em tabela" como próximo, depois CSV, depois operações avançadas). Repositório publicado no GitHub como `Marcus-Holanda777/dataframe-java` (público).
+- Desenhado em conversa (sem escrever no arquivo, seguindo a regra suprema) o design completo de `toString()`/`show()`/`show(int)` para `DataFrame`, todos delegando para um `private String render(int maxRows)` compartilhado (DRY): calcula `Map<String, Integer> widths` (maior entre tamanho do header e maior célula, iterando `columns.entrySet()` — não `column.getName()`, mantendo a convenção já registrada), monta cabeçalho + separador `"-".repeat(...)` + linhas via `String.join(" | ", ...)`, com rodapé `"... (mostrando X de Y linhas)"` quando truncado.
+- Desenvolvedor implementou o design colando o `toString()`/`render()` primeiro; revisão encontrou e corrigiu junto: variável local `columns` (int) sombreando o campo `columns` (o `LinkedHashMap`) — resolvido usando `totalRows`/`totalCols`; separador `" | "` sobrando no final de cada linha — resolvido com `String.join`.
+- `show()`/`show(int limit)` implementados depois. Validação `limit <= 0` lançando `IllegalArgumentException` (mesmo estilo de `addColumn`, mensagem via `.formatted()`) colocada corretamente em `show(int limit)`, a "porta de entrada pública" por onde qualquer valor arbitrário do usuário da classe passa.
+- Gap encontrado e corrigido pelo desenvolvedor: `show()` (sem args) chamava `render(20)` diretamente em vez de `show(20)`, contornando a validação — funcionava hoje (20 nunca é inválido) mas quebrava a garantia de que toda chamada pública passa pela validação. Corrigido para `return show(20);`.
+- Conceitos estudados em profundidade: imutabilidade de `String` em Java e por que `StringBuilder` evita recriar objetos a cada concatenação em loop (mutação de um buffer interno vs. O(n²) de `s = s + x` repetido); sintaxe de `String.format`/`%-Ns` (flag `-` = left-justify, `N` = largura mínima do campo, `s` = conversão pra String), incluindo por que a largura precisa ser montada dinamicamente via concatenação de string (`"%-" + width + "s"`) já que cada coluna tem uma largura diferente calculada em runtime.
+- `mvn compile` confirmado limpo (`BUILD SUCCESS`) com o `toString()`/`show()`/`show(int)` finais.
+- Nitpick das 3 linhas em branco sobrando no final de `DataFrame.java` corrigido pelo desenvolvedor.
+- **Ainda falta antes de considerar o Módulo 4 fechado**: nenhum teste escrito ainda para `toString()`, `show()`, `show(int)`. Checklist proposto pra próxima sessão: caso feliz (tabela pequena, conferir cabeçalho/linhas), truncamento (`show(1)` num DataFrame com mais de 1 linha, conferindo o rodapé "mostrando X de Y"), `show(0)`/`show(-1)` lançando `IllegalArgumentException`, `toString()`/`show()` num DataFrame vazio (deve retornar `"DataFrame vazio (sem colunas)"`).
+- Próxima sessão: escrever `DataFrameTest` — os 4 casos do checklist acima — antes de avançar pro leitor de CSV.

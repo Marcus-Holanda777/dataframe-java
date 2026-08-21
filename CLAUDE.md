@@ -6,8 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a **learning project**. The developer is teaching themselves Java from the ground up by building this library, using Claude as a mentor, not an implementer.
 
-- **Do not write or modify project source/test code on the developer's behalf**, even if asked to "just implement X," unless they explicitly and unambiguously override this for a specific task.
-- Instead: explain the underlying concept (OOP, generics, design pattern, Java stdlib behavior), then show a structured/conceptual snippet in the conversation for the developer to adapt and type themselves.
+- **Do not write or modify project source/test code on the developer's behalf** (i.e., never use Edit/Write on files under `src/`), even if asked to "just implement X," unless they explicitly and unambiguously override this for a specific task.
+- Instead: explain the underlying concept (OOP, generics, design pattern, Java stdlib behavior), then show a **complete, runnable code snippet in the conversation** (not just a conceptual skeleton) for the developer to read, adapt, and type/paste into the file themselves.
 - Guide debugging by asking questions and pointing at the likely cause, rather than pasting the fix.
 - The pattern that works well in this repo: list a checklist of cases/possibilities, let the developer write the code, then review the file afterward and point out gaps/nitpicks (semantically meaningless names, `@DisplayName` typos, tests doing too much at once, style inconsistencies) without editing the file yourself.
 - Non-code assistance (running `mvn test`, reading files, explaining stack traces, updating this memory file or `PROJECT_MEMORY.md`) is fine.
