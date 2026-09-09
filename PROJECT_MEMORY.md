@@ -55,9 +55,19 @@
 
 ## 🎯 Próximos Passos (Próxima Sessão / Próxima Lição)
 
-1. **Testes para `toString()`/`show()`/`show(int)`** (próximo passo imediato — ver checklist na nota de sessão de 2026-08-20 abaixo).
-2. **Leitor de CSV (`CsvReader` / `DataFrameReader`)**:
-   - Leitura de arquivos `.csv` e instanciação automática do `DataFrame`.
+1. **Leitor de CSV (`CsvReader` / `DataFrameReader`)**:
+   - Leitura de arquivos `.csv` e instanciação automática do `DataFrame`, com inferência automática de tipo por coluna.
+
+---
+
+## 📝 Notas da Sessão de 2026-09-08
+
+- **Módulo 4 (exibição em tabela) fechado**: `DataFrameTest.java` ganhou os 4 testes que faltavam para `toString()`/`show()`/`show(int)`, seguindo o checklist definido na sessão de 2026-08-20 — `testShowCasoFeliz` (cabeçalho e valores presentes no `show()`), `testShowTruncamento` (`show(1)` com 3 linhas, conferindo o rodapé `"... (mostrando 1 de 3 linhas)"` e que a 3ª linha não aparece), `testShowLimiteInvalido` (`show(0)` e `show(-1)` lançando `IllegalArgumentException`), `testShowDataFrameVazio` (`toString()`/`show()` retornando `"DataFrame vazio (sem colunas)"`).
+- IA mostrou o snippet completo dos 4 testes em conversa (relaxamento da regra suprema já registrado — ver [[feedback-mentorship-no-code]]); desenvolvedor colou/adaptou no arquivo.
+- Revisão encontrou 4 gaps, 3 corrigidos pelo desenvolvedor: (1) nome de método `testeShowTruncamento` (com "e" extra, inconsistente com o padrão `test...` do resto do arquivo) → renomeado para `testShowTruncamento`; (2) variável `rst` pouco descritiva → renomeada para `resultado` (mesmo nome usado no teste anterior para o mesmo tipo de retorno); (3) falta de espaço antes de `{` em `testShowDataFrameVazio(){` → corrigido para `() {`. O quarto ponto (acentuação faltando em "cabeçalho" no `@DisplayName` da linha 88) foi uma escolha consciente do desenvolvedor de remover o cedilha — não é mais considerado gap, é estilo intencional.
+- Sessão também cobriu explicação conceitual do `render()` privado de `DataFrame`: `Map<K,V>`/`Map.Entry`, por que `LinkedHashMap` (e não `HashMap`) foi escolhido tanto para o campo `columns` quanto para o `Map<String, Integer> widths` local — em ambos os casos a ordem de iteração (ordem de inserção) importa para a tabela sair alinhada e na ordem em que as colunas foram adicionadas; `HashMap` não garantiria isso. Também revisitado: `StringBuilder` vs concatenação de `String` em loop, `List<String>` + `String.join(" | ", ...)` como alternativa a separador manual, `String.format("%-Ns", ...)`.
+- Estado final: **35/35 testes passando** (`mvn test`, `BUILD SUCCESS`) — todos os 6 tipos de coluna + `DataFrame` completo (criação, shape, exibição).
+- Próxima sessão: começar o leitor de CSV (`CsvReader`/`DataFrameReader`) com inferência automática de tipo — ainda não desenhado em conversa, começar do zero.
 
 ---
 
